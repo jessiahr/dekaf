@@ -26,11 +26,15 @@ defmodule Dekaf.Producer do
         {:reply, status, state}
       end
 
-      def delivery_report(:ok, message), do: :ok
-
       def delivery_report(status, message) do
-        IO.puts("received delivery report: #{status}")
-        :ok
+        case {status, Application.get_env(:dekaf, :delivery_report)} do
+          {:ok, nil} ->
+              :ok
+          {_, nil} ->
+            Logger.warn("received delivery report: #{status} for message #{inspect(message)}")
+          {_, {module, function_name}} ->
+            apply(module, function_name, [{status, message}])
+        end
       end
 
       def stats_callback(client_id, kafka_status_message) do

@@ -1,10 +1,10 @@
 defmodule Dekaf.ClusterStatus do
   use GenServer
-  import Logger
+  require Logger
   alias Dekaf.StatusFormatter
   @table_name :dekaf_cluster_status
   def start_link(_) do
-    IO.puts("Starting ClusterStatus")
+    Logger.info("Starting ClusterStatus")
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
